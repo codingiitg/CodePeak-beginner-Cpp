@@ -37,6 +37,7 @@ class Matrix {
     int getColSize();
 
     //setter functions
+    void padding();
     void setMatrix(vector<vector<T>>& tempMat);
 
     //utility functions
@@ -101,6 +102,21 @@ void Matrix<T>::setMatrix(vector<vector<T>>& tempMat){
     colSize = tempMat[0].size(); 
 }
 
+template <typename T>                           //new generated
+void Matrix<T>::padding(){
+    vector<T>v(max(rowSize,colSize),(T)0);
+    if(rowSize!=colSize){
+        for(int i=0;i<max(rowSize,colSize);i++){
+            if(i>=rowSize){
+                mat.push_pack(v);
+            }
+            for(int j=0;j<max(colSize,rowSize);j++){
+                if(j>=colSize) mat[i].push_back((T)0);
+            }
+        }
+    }
+}
+
 template <typename T>
 Matrix<T> Matrix<T>::operator+(Matrix& rhs){
     assert(colSize == rhs.getColSize && rowSize == rhs.getRowSize());
@@ -117,15 +133,37 @@ Matrix<T> Matrix<T>::operator+(Matrix& rhs){
 }
 
 template <typename T>
+Matrix<T> Matrix<T>::operator-(Matrix& rhs){
+    assert(colSize == rhs.getColSize && rowSize == rhs.getRowSize());
+    vector<vector<T>> B=rhs.getMatrix();
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize,(T)0));
+    for(int i=0;i<rowSize;i++){
+        for(int j = 0;j < colSize; j++){
+            ansMat[i][j]=mat[i][j]-B[i][j];
+        }
+    }
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
 Matrix<T> Matrix<T>::operator*(Matrix& rhs){
     vector<vector<T>> ansMat(rowSize, vector<T>(rhs.getColSize(), (T)0)); // the matrix which will store the value of multiplication
     vector<vector<T>> B = rhs.getMatrix();
 
     assert(colSize == rhs.getRowSize());
-    if()
+    
     int i,j,k;
     int rowSize1=rhs.getRowSize();
     int colSize1=rhs.getColSize();
+
+    if(colSize==1 && rowSize==1 && colSize1==1 && rowSize1==1){
+        Matrix<T> C(1,1,T(0));
+        ansMat[0][0] = mat[0][0]*B[0][0];
+        C.setMatrix(ansMat);
+        return C;
+    }
     vector<vector<T>> a(rowSize/2,vector<T>(colSize/2,(T)0));
     for(i=0;i<rowSize/2;i++){
         for(j=0;j<colSize/2;j++){
@@ -173,34 +211,27 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
             f[i][j-(colSize1/2)]=B[i][j];
         }
     }
-    Matrix<T> am(rowSize/2,colSize/2,(T)0);
-    am.setMatrix(a);
+    Matrix<T> fm(rowSize1/2,(colSize1-colSize1/2),(T)0);
+    fm.setMatrix(f);
     vector<vector<T>> g(rowSize1-rowSize1/2,vector<T>((colSize1/2),(T)0));
     for(i=rowSize1/2;i<rowSize1;i++){
         for(j=0;j<colSize1/2;j++){
             g[i-rowSize1/2][j]=B[i][j];
         }
     }
-    Matrix<T> am(rowSize/2,colSize/2,(T)0);
-    am.setMatrix(a);
+    Matrix<T> gm(rowSize1-rowSize1/2,(colSize1/2),(T)0);
+    gm.setMatrix(g);
     vector<vector<T>> h(rowSize1-rowSize1/2,vector<T>((colSize1/2),(T)0));
     for(i=rowSize1/2;i<rowSize1;i++){
         for(j=colSize1/2;j<colSize1;j++){
             d[i-rowSize1/2][j-colSize1/2]=B[i][j];
         }
     }
-    Matrix<T> am(rowSize/2,colSize/2,(T)0);
-    am.setMatrix(a);
-    T p1,p2,p3,p4,p5,p6,p7;
-    // for (i = 0; i < rowSize; i++){
-    //     for (j = 0; j < rhs.getColSize(); j++){
-    //         temp = (T)0;
-    //         for (k = 0; k < colSize; k++){
-    //             temp += mat[i][k] * B[k][j];
-    //         }
-    //         ansMat[i][j] = temp;
-    //     }
-    // }
+    Matrix<T> hm(rowSize1-rowSize1/2,(colSize1/2),(T)0);
+    hm.setMatrix(h);
+    
+    //computing 7 products p1 to p7
+
 
     Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
     C.setMatrix(ansMat);
