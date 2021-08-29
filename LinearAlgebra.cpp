@@ -41,7 +41,7 @@ class Matrix {
 
     //utility functions
     Matrix transpose(); // returns the transpose of the matrix
-    Matrix matExponentiation(Matrix& M, int pow); // return M^n for the matrix
+    Matrix matExponentiation(int pow); // return M^n for the matrix
     void PowerInteration(vector<T> eigenVector, double eigenValue);   // Using Power interation method to find
                                                     // the most dominant eigenVector and its corresponding eigenvalue
                                                     // In this function rather than returning ans we are going to 
@@ -124,13 +124,150 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
     return C;
 }
 
+template <typename T>
+Matrix<T> Matrix<T>::operator+(Matrix& rhs){
+    vector<vector<T>> ansMat(rowSize, vector<T>(rhs.getColSize(), (T)0)); // the matrix which will store the value of addition
+    vector<vector<T>> B = rhs.getMatrix();
+
+    assert(rowSize == rhs.getRowSize() && colSize == rhs.getColSize());
+    int i,j;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < rhs.getColSize(); j++){
+            ansMat[i][j] = mat[i][j] + B[i][j];
+        }
+    }
+
+    Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-(Matrix& rhs){
+    vector<vector<T>> ansMat(rowSize, vector<T>(rhs.getColSize(), (T)0)); // the matrix which will store the value of subtraction
+    vector<vector<T>> B = rhs.getMatrix();
+
+    assert(rowSize == rhs.getRowSize() && colSize == rhs.getColSize());
+    int i,j;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < rhs.getColSize(); j++){
+            ansMat[i][j] = mat[i][j] - B[i][j];
+        }
+    }
+
+    Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(double val){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of multiplication
+
+    int i,j;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            ansMat[i][j] = mat[i][j] * val;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+(double val){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of addition
+
+    int i,j;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            ansMat[i][j] = mat[i][j] + val;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-(double val){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of subtraction
+
+    int i,j;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            ansMat[i][j] = mat[i][j] - val;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator/(double val){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of division
+
+    int i,j;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            ansMat[i][j] = mat[i][j] / val;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::transpose(){
+    vector<vector<T>> ansMat(colSize, vector<T>(rowSize, (T)0)); // the matrix which will store the value of transposed matrix
+    
+    int i, j;
+    for(int i = 0; i < rowSize; i++){
+        for(int j = 0; j < colSize; j++){
+            ansMat[j][i] = mat[i][j];
+        }
+    }
+
+    Matrix<T> C(colSize, rowSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::matExponentiation(int pow){
+    
+    assert(rowSize == colSize);
+
+    Matrix<T> res(rowSize, colSize, T(0));
+    res.setMatrix(mat);
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(mat);
+
+    int i;
+    for(i = 1; i < pow; i++){
+        C = (res * C);
+    }
+
+    return C;
+}
+
 int main(){
     cout<<"elementry tests ->"<<endl;
     
-    Matrix<int> a(4, 2, 2);
+    Matrix<int> a(2, 2, 2);
     a.printMatrix();
     
-    Matrix<int> b(a);
+    Matrix<int> b(90, 2, 2);
+    // b.printMatrix();
+    
+    b = a.matExponentiation(3);
     b.printMatrix();
     
     vector<vector<int>> tempMat(3, vector<int>(4, 5));
