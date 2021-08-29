@@ -39,9 +39,13 @@ class Matrix {
     //setter functions
     void setMatrix(vector<vector<T>>& tempMat);
 
+    //identity matrix creator
+
+    Matrix identity(int row); //returns an identity matrix
+
     //utility functions
     Matrix transpose(); // returns the transpose of the matrix
-    Matrix matExponentiation(Matrix& M, int pow); // return M^n for the matrix
+    Matrix matExponentiation(int pow); // return M^n for the matrix
     void PowerInteration(vector<T> eigenVector, double eigenValue);   // Using Power interation method to find
                                                     // the most dominant eigenVector and its corresponding eigenvalue
                                                     // In this function rather than returning ans we are going to 
@@ -124,11 +128,66 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
     return C;
 }
 
+template <typename T>
+Matrix<T> Matrix<T>::identity(int row){
+    vector<vector<T>> id(row, vector<T>(row, (T)0));
+
+    int i,j;
+    for(i=0;i<row;i++)
+      for(j=0;j<row;j++)
+      {
+          if(i==j)
+           id[i][j]=1;
+          else
+           id[i][j]=0;
+      }
+
+    Matrix<T> C(row, row, (T)0);
+    C.setMatrix(id);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::transpose(){
+    vector<vector<T>> transMat(colSize, vector<T>(rowSize, (T)0));
+
+    int i,j;
+    for(i=0;i<rowSize;i++)
+      for(j=0;j<colSize;j++)
+      {
+          transMat[j][i]=mat[i][j];
+      }
+
+    Matrix<T> C(colSize, rowSize, (T)0);
+    C.setMatrix(transMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::matExponentiation(int pow){
+    Matrix<int> res(rowSize,colSize,(T)0);
+    res=identity(rowSize);
+    Matrix<int> temp(rowSize,colSize,(T)0);
+    temp.setMatrix(mat);
+    while(pow>0)
+    {
+        if(pow%2==1)
+          res=res*temp;
+        temp=temp*temp;
+        pow=(int)pow/2;
+    }
+    return res;
+}
+
 int main(){
     cout<<"elementry tests ->"<<endl;
     
     Matrix<int> a(4, 2, 2);
     a.printMatrix();
+    
+    Matrix<int> c(a);
+    c=c.transpose();
+    c.printMatrix();
     
     Matrix<int> b(a);
     b.printMatrix();
@@ -136,6 +195,10 @@ int main(){
     vector<vector<int>> tempMat(3, vector<int>(4, 5));
     a.setMatrix(tempMat);
     a.printMatrix();
+    
+    Matrix<int> d(4, 4, 2);
+    d=d.matExponentiation(3);
+    d.printMatrix();
     
     (a*b).printMatrix();
     
