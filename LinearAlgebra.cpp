@@ -102,22 +102,105 @@ void Matrix<T>::setMatrix(vector<vector<T>>& tempMat){
 }
 
 template <typename T>
+Matrix<T> Matrix<T>::operator+(Matrix& rhs){
+    assert(colSize == rhs.getColSize && rowSize == rhs.getRowSize());
+    vector<vector<T>> B=rhs.getMatrix();
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize,(T)0));
+    for(int i=0;i<rowSize;i++){
+        for(int j = 0;j < colSize; j++){
+            ansMat[i][j]=B[i][j]+mat[i][j];
+        }
+    }
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
 Matrix<T> Matrix<T>::operator*(Matrix& rhs){
     vector<vector<T>> ansMat(rowSize, vector<T>(rhs.getColSize(), (T)0)); // the matrix which will store the value of multiplication
     vector<vector<T>> B = rhs.getMatrix();
 
     assert(colSize == rhs.getRowSize());
+    if()
     int i,j,k;
-    T temp;
-    for (i = 0; i < rowSize; i++){
-        for (j = 0; j < rhs.getColSize(); j++){
-            temp = (T)0;
-            for (k = 0; k < colSize; k++){
-                temp += mat[i][k] * B[k][j];
-            }
-            ansMat[i][j] = temp;
+    int rowSize1=rhs.getRowSize();
+    int colSize1=rhs.getColSize();
+    vector<vector<T>> a(rowSize/2,vector<T>(colSize/2,(T)0));
+    for(i=0;i<rowSize/2;i++){
+        for(j=0;j<colSize/2;j++){
+            a[i][j]=mat[i][j];
         }
     }
+    Matrix<T> am(rowSize/2,colSize/2,(T)0);
+    am.setMatrix(a);
+    vector<vector<T>> b(rowSize/2,vector<T>((colSize-colSize/2),(T)0));
+    for(i=0;i<rowSize/2;i++){
+        for(j=colSize/2;j<colSize;j++){
+            b[i][j-(colSize/2)]=mat[i][j];
+        }
+    }
+    Matrix<T> bm(rowSize/2,(colSize-colSize/2),(T)0);
+    bm.setMatrix(b);
+    vector<vector<T>> c(rowSize-rowSize/2,vector<T>((colSize/2),(T)0));
+    for(i=rowSize/2;i<rowSize;i++){
+        for(j=0;j<colSize/2;j++){
+            c[i-rowSize/2][j]=mat[i][j];
+        }
+    }
+    Matrix<T> cm(rowSize-rowSize/2,(colSize/2),(T)0);
+    cm.setMatrix(c);
+    vector<vector<T>> d(rowSize-rowSize/2,vector<T>((colSize/2),(T)0));
+    for(i=rowSize/2;i<rowSize;i++){
+        for(j=colSize/2;j<colSize;j++){
+            d[i-rowSize/2][j-colSize/2]=mat[i][j];
+        }
+    }
+    Matrix<T> dm(rowSize-rowSize/2,(colSize/2),(T)0);
+    dm.setMatrix(d);
+
+    vector<vector<T>> e(rowSize1/2,vector<T>(colSize1/2,(T)0));
+    for(i=0;i<rowSize1/2;i++){
+        for(j=0;j<colSize1/2;j++){
+            e[i][j]=B[i][j];
+        }
+    }
+    Matrix<T> em(rowSize1/2,colSize1/2,(T)0);
+    em.setMatrix(e);
+    vector<vector<T>> f(rowSize1/2,vector<T>((colSize1-colSize1/2),(T)0));
+    for(i=0;i<rowSize1/2;i++){
+        for(j=colSize1/2;j<colSize1;j++){
+            f[i][j-(colSize1/2)]=B[i][j];
+        }
+    }
+    Matrix<T> am(rowSize/2,colSize/2,(T)0);
+    am.setMatrix(a);
+    vector<vector<T>> g(rowSize1-rowSize1/2,vector<T>((colSize1/2),(T)0));
+    for(i=rowSize1/2;i<rowSize1;i++){
+        for(j=0;j<colSize1/2;j++){
+            g[i-rowSize1/2][j]=B[i][j];
+        }
+    }
+    Matrix<T> am(rowSize/2,colSize/2,(T)0);
+    am.setMatrix(a);
+    vector<vector<T>> h(rowSize1-rowSize1/2,vector<T>((colSize1/2),(T)0));
+    for(i=rowSize1/2;i<rowSize1;i++){
+        for(j=colSize1/2;j<colSize1;j++){
+            d[i-rowSize1/2][j-colSize1/2]=B[i][j];
+        }
+    }
+    Matrix<T> am(rowSize/2,colSize/2,(T)0);
+    am.setMatrix(a);
+    T p1,p2,p3,p4,p5,p6,p7;
+    // for (i = 0; i < rowSize; i++){
+    //     for (j = 0; j < rhs.getColSize(); j++){
+    //         temp = (T)0;
+    //         for (k = 0; k < colSize; k++){
+    //             temp += mat[i][k] * B[k][j];
+    //         }
+    //         ansMat[i][j] = temp;
+    //     }
+    // }
 
     Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
     C.setMatrix(ansMat);
