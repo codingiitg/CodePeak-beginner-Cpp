@@ -55,17 +55,17 @@ class Matrix {
 }; 
 template <typename T>
 Matrix<T>::Matrix(int N, int M, T defaultValue){
-    mat.resize(N, vector<T>(M, defaultValue));  //initialize the matrix
-    rowSize = N;                                     
-    colSize = M;
+    mat.resize(M, vector<T>(N, defaultValue));  //initialize the matrix
+    rowSize = M;                                     
+    colSize = N;
 }
 
 template <typename T>
 Matrix<T>::Matrix(Matrix& temp){
     *this = temp;
-    // this->mat = temp.getMatrix();
-    // this->rowSize = temp.getRowSize();
-    // this->colSize = temp.getColSize();
+    this->mat = temp.getMatrix();
+    this->rowSize = temp.getRowSize();
+    this->colSize = temp.getColSize();
 }
 
 template <typename T>
@@ -124,6 +124,169 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
     return C;
 }
 
+template <typename T>
+Matrix<T> Matrix<T>::operator+(Matrix& rhs){
+    assert((rowSize == rhs.getRowSize()) && (colSize == rhs.getColSize()));
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of multiplication
+    vector<vector<T>> B = rhs.getMatrix();
+
+    int i,j;
+    T temp;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            temp = (T)0;
+            temp = mat[i][j] + B[i][j];
+            ansMat[i][j] = temp;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-(Matrix& rhs){
+    assert((rowSize == rhs.getRowSize()) && (colSize == rhs.getColSize()));
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of multiplication
+    vector<vector<T>> B = rhs.getMatrix();
+
+    int i,j;
+    T temp;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            temp = (T)0;
+            temp = mat[i][j] - B[i][j];
+            ansMat[i][j] = temp;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+(double val){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of multiplication
+    
+    int i,j;
+    T temp;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            temp = (T)0;
+            temp = mat[i][j] + val;
+            ansMat[i][j] = temp;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-(double val){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of multiplication
+    
+    int i,j;
+    T temp;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            temp = (T)0;
+            temp = mat[i][j] - val;
+            ansMat[i][j] = temp;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(double val){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of multiplication
+    
+    int i,j;
+    T temp;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            temp = (T)0;
+            temp = mat[i][j] * val;
+            ansMat[i][j] = temp;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator/(double val){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0)); // the matrix which will store the value of multiplication
+    
+    int i,j;
+    T temp;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            temp = (T)0;
+            temp = (mat[i][j]*1.0) / val;
+            ansMat[i][j] = temp;
+        }
+    }
+
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::transpose(){
+    vector<vector<T>> ansMat(colSize, vector<T>(rowSize, (T)0)); // the matrix which will store the value of multiplication
+    
+    int i,j;
+    T temp;
+    for (i = 0; i < rowSize; i++){
+        for (j = 0; j < colSize; j++){
+            temp = (T)0;
+            temp = mat[i][j];
+            ansMat[j][i] = temp;
+        }
+    }
+
+    Matrix<T> C(colSize, rowSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::matExponentiation(Matrix& M, int pow){
+    assert(M.getColSize() == M.getRowSize());
+    vector<vector<T>> ansMat(M.getRowSize, vector<T>(M.getColSize(), (T)0)); // the matrix which will store the value of multiplication
+    vector<vector<T>> B = M.getMatrix();
+
+    for(int i=0; i<pow-1; i++){
+        B = (B*M);
+    }
+
+    int i,j;
+    T temp;
+    for (i = 0; i < M.getRowSize(); i++){
+        for (j = 0; j < M.getColSize(); j++){
+            temp = (T)0;
+            temp = B[i][j];
+            ansMat[i][j] = temp;
+        }
+    }
+
+    Matrix<T> C(M.getRowSize(), M.getColSize(), (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+
 int main(){
     cout<<"elementry tests ->"<<endl;
     
@@ -133,7 +296,7 @@ int main(){
     Matrix<int> b(a);
     b.printMatrix();
     
-    vector<vector<int>> tempMat(3, vector<int>(4, 5));
+    vector<vector<int>> tempMat(3, vector<int>(2, 5));
     a.setMatrix(tempMat);
     a.printMatrix();
     
