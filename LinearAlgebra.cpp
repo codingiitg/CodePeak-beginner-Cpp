@@ -156,8 +156,11 @@ int main(){
     
     (a*b).printMatrix();
 
-    Matrix<int> p(2,2);
+    Matrix<int> p(2,3);
     p.printMatrix();
+
+    Matrix<int> q(2);
+    q.printMatrix();
     
     return 0;
 }
