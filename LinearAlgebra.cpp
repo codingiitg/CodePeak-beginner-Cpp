@@ -15,6 +15,8 @@ class Matrix {
     //constructor
     Matrix(int N, int M, T defaultValue);  // initialises a MxN matrix with defaultValue
     Matrix(Matrix& temp);  // Must create a deep copy of the temp matrix
+    Matrix(int N); // initialises a NxN matrix
+    Matrix(int N, int M); // initialises a MxN matrix
 
     //Logging Functions
     void printMatrix();
@@ -56,6 +58,20 @@ class Matrix {
 template <typename T>
 Matrix<T>::Matrix(int N, int M, T defaultValue){
     mat.resize(N, vector<T>(M, defaultValue));  //initialize the matrix
+    rowSize = N;                                     
+    colSize = M;
+}
+
+template <typename T>
+Matrix<T>::Matrix(int N){
+    mat.resize(N, vector<T>(N, 0));  //initialize the matrix
+    rowSize = N;                                     
+    colSize = N;
+}
+
+template <typename T>
+Matrix<T>::Matrix(int N, int M){
+    mat.resize(N, vector<T>(M, 0));  //initialize the matrix
     rowSize = N;                                     
     colSize = M;
 }
