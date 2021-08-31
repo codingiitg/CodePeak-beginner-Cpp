@@ -115,6 +115,17 @@ void Matrix<T>::padding(){
             }
         }
     }
+    rowSize = max(rowSize,colSize);
+    colSize = max(rowSize,colSize);
+    if(rowSize%2==1){
+        vector<T>v1(colSize+1,(T)0);
+        for(int i=0;i<rowSize;i++){
+            mat[i].push_back((T)0);
+        }
+        mat.push_back(v1);
+        rowSize+=1;
+        colSize+=1;
+    }
 }
 
 template <typename T>
@@ -149,14 +160,23 @@ Matrix<T> Matrix<T>::operator-(Matrix& rhs){
 
 template <typename T>
 Matrix<T> Matrix<T>::operator*(Matrix& rhs){
+    int cache_row=rowSize;
+    int cache_col=rhs.getColSize();
     vector<vector<T>> ansMat(rowSize, vector<T>(rhs.getColSize(), (T)0)); // the matrix which will store the value of multiplication
-    vector<vector<T>> B = rhs.getMatrix();
+    vector<vector<T>> A = rhs.getMatrix();
 
+
+    //padding
+    rhs.padding();
+    this->padding();
+
+    //checking if the assumption of row is equal tpo columns is actually true
     assert(colSize == rhs.getRowSize());
     
     int i,j,k;
     int rowSize1=rhs.getRowSize();
     int colSize1=rhs.getColSize();
+
 
     if(colSize==1 && rowSize==1 && colSize1==1 && rowSize1==1){
         Matrix<T> C(1,1,T(0));
@@ -230,8 +250,55 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
     Matrix<T> hm(rowSize1-rowSize1/2,(colSize1/2),(T)0);
     hm.setMatrix(h);
     
-    //computing 7 products p1 to p7
+    //initializing matrices from p1 to p7
+    Matrix p1(rowSize/2,colSize/2,T(0));
+    Matrix p2(rowSize/2,colSize/2,T(0));
+    Matrix p3(rowSize/2,colSize/2,T(0));
+    Matrix p4(rowSize/2,colSize/2,T(0));
+    Matrix p5(rowSize/2,colSize/2,T(0));
+    Matrix p6(rowSize/2,colSize/2,T(0));
+    Matrix p7(rowSize/2,colSize/2,T(0));
 
+    //computing p1 to p7
+    p1 = am.operator*(fm.operator-(hm));
+    p2 = (am.operator+(b)).operator*(h);
+    p3 = (cm.operator+(dm)).operator*(em);
+    p4 = dm.operator*(gm.operator-(em));
+    p5 = (am.operator+(dm)).operator*(em.operator+(hm));
+    p6 = (bm.operator-(dm)).operator*(gm.operator+(hm));
+    p7 = (am.operator-(cm)).operator*(em.operator+(fm));
+
+    //computing the 4 quadrants of the final matrix c 
+    Matrix c11((p5.operator+(p4.operator+(p6))).operator-(p2));
+    Matrix c12(p1.operator+(p2));
+    Matrix c21(p3.operator+(p4));
+    Matrix c22((p1.operator+(p5)).operator-(p3.operator+(p7)));
+
+
+    for(int i = 0; i < rowSize/2; i++){
+        for(int j= 0; j< colSize/2; j++){
+            ansMat[i][j] = c11.mat[i][j];
+        }
+    }
+
+    for(int i = 0; i < rowSize/2; i++){
+        for(int j= colSize/2; j< cache_col; j++){
+            ansMat[i][j] = c12.mat[i][j - colSize/2];
+        }
+    }
+
+    for(int i = rowSize/2; i < cache_col; i++){
+        for(int j= 0; j< colSize/2; j++){
+            ansMat[i][j] = c21.mat[i - rowSize/2][j];
+        }
+    }
+
+    for(int i = rowSize/2; i < cache_col; i++){
+        for(int j= colSize/2; j< cache_col; j++){
+            ansMat[i][j] = c22.mat[i - rowSize/2][j - colSize/2];
+        }
+    }
+    
 
     Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
     C.setMatrix(ansMat);
