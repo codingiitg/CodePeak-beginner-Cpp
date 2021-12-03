@@ -12,8 +12,11 @@ class Matrix {
     int rowSize = -1, colSize = -1;  // No. of rows and columns respectively
 
     public:
-    //constructor
+    //constructors
     Matrix(int N, int M, T defaultValue);  // initialises a MxN matrix with defaultValue
+    Matrix(int N);                         // initialises a NxN matrix with each entry 0
+    Matrix(int N, int M);                  // initialises a MxN matrix with each entry 0
+
     Matrix(Matrix& temp);  // Must create a deep copy of the temp matrix
 
     //Logging Functions
@@ -53,10 +56,25 @@ class Matrix {
     
 
 }; 
+
 template <typename T>
 Matrix<T>::Matrix(int N, int M, T defaultValue){
     mat.resize(N, vector<T>(M, defaultValue));  //initialize the matrix
     rowSize = N;                                     
+    colSize = M;
+}
+
+template <typename T>
+Matrix<T>::Matrix(int N){
+    mat.resize(N, vector<T>(N, 0));               // initalizing the NxN null matrix
+    rowSize = N;                                // updating rowSize and colSize
+    colSize = N;
+}
+
+template <typename T>
+Matrix<T>::Matrix(int N, int M){
+    mat.resize(N, vector<T>(M, 0));               // intiliazing the MxN null matrix
+    rowSize = N;                                // updating rowSize and colSize
     colSize = M;
 }
 
