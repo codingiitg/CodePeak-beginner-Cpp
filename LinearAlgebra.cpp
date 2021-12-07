@@ -41,7 +41,7 @@ class Matrix {
 
     //utility functions
     Matrix transpose(); // returns the transpose of the matrix
-    Matrix matExponentiation(Matrix& M, int pow); // return M^n for the matrix
+    Matrix matExponentiation(Matrix& M,int pow); // return M^n for the matrix
     void PowerInteration(vector<T> eigenVector, double eigenValue);   // Using Power interation method to find
                                                     // the most dominant eigenVector and its corresponding eigenvalue
                                                     // In this function rather than returning ans we are going to 
@@ -118,16 +118,61 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
             ansMat[i][j] = temp;
         }
     }
-
+    
     Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
     C.setMatrix(ansMat);
     return C;
 }
 
+template <typename T>
+Matrix<T> Matrix<T>::matExponentiation(Matrix& M,int pow){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0));  //Gives exponentiation M^n
+    vector<vector<T>> B = M.getMatrix();
+
+    assert(colSize == rowSize);
+    T temp;
+    for(int d=1;d<pow;d++){
+        for (int j = 0; j < rowSize; j++){
+            for (int k = 0; k < colSize; k++){
+                temp = (T)0;
+                for (int l = 0; l < colSize; l++){
+                    temp += mat[j][l] * B[l][k];
+                }
+            ansMat[j][k] = temp;
+            }
+        }
+        for (int e = 0; e < rowSize; e++){
+            for (int f = 0; f < colSize; f++){
+                B[e][f]=ansMat[e][f];
+            }
+        }
+    }
+    
+    Matrix<T> C(rowSize,colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::transpose(){   //Returns the transpose of the matrix
+    vector<vector<T>> transMat(colSize, vector<T>(rowSize, (T)0));
+    T temp;                   
+    for(int i=0;i<colSize;i++){  
+        for(int j=0;j<rowSize;j++){
+            transMat[i][j]=mat[j][i];
+        }
+    }
+
+    Matrix <T> finalmat(colSize, rowSize, (T)0);
+    
+    finalmat.setMatrix(transMat);
+    return finalmat;
+}
+
 int main(){
     cout<<"elementry tests ->"<<endl;
     
-    Matrix<int> a(4, 2, 2);
+    Matrix<int> a(4, 4, 2);
     a.printMatrix();
     
     Matrix<int> b(a);
@@ -137,7 +182,12 @@ int main(){
     a.setMatrix(tempMat);
     a.printMatrix();
     
+    b.transpose().printMatrix();    //prints the transpose of matrix a
+    b.matExponentiation(b,2).printMatrix(); //Gives matrix b^2 
+    
     (a*b).printMatrix();
     
     return 0;
 }
+
+
