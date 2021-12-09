@@ -41,7 +41,7 @@ class Matrix {
 
     //utility functions
     Matrix transpose(); // returns the transpose of the matrix
-    Matrix matExponentiation(Matrix& M,int pow); // return M^n for the matrix
+    Matrix matExponentiation(Matrix& M, int pow); // return M^n for the matrix
     void PowerInteration(vector<T> eigenVector, double eigenValue);   // Using Power interation method to find
                                                     // the most dominant eigenVector and its corresponding eigenvalue
                                                     // In this function rather than returning ans we are going to 
@@ -101,6 +101,12 @@ void Matrix<T>::setMatrix(vector<vector<T>>& tempMat){
     colSize = tempMat[0].size(); 
 }
 
+/*
+----------------------------------------------------------------------------------------------
+MATRIX OPERATIONS:-
+----------------------------------------------------------------------------------------------
+*/
+
 template <typename T>
 Matrix<T> Matrix<T>::operator*(Matrix& rhs){
     vector<vector<T>> ansMat(rowSize, vector<T>(rhs.getColSize(), (T)0)); // the matrix which will store the value of multiplication
@@ -118,6 +124,25 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
             ansMat[i][j] = temp;
         }
     }
+
+    Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+(Matrix& rhs){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0));
+    vector<vector<T>> B = rhs.getMatrix();
+
+    assert((colSize == rhs.getColSize()) && rowSize == rhs.getRowSize());
+    T temp;
+    for(int i=0;i<rowSize;i++){
+        for(int j=0;j<colSize;j++){
+            temp=mat[i][j] + B[i][j];
+            ansMat[i][j]=temp;
+        }
+    }
     
     Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
     C.setMatrix(ansMat);
@@ -125,54 +150,108 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::matExponentiation(Matrix& M,int pow){
-    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0));  //Gives exponentiation M^n
-    vector<vector<T>> B = M.getMatrix();
+Matrix<T> Matrix<T>::operator-(Matrix& rhs){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0));
+    vector<vector<T>> B = rhs.getMatrix();
 
-    assert(colSize == rowSize);
+    assert((colSize == rhs.getColSize()) && rowSize == rhs.getRowSize());
     T temp;
-    for(int d=1;d<pow;d++){
-        for (int j = 0; j < rowSize; j++){
-            for (int k = 0; k < colSize; k++){
-                temp = (T)0;
-                for (int l = 0; l < colSize; l++){
-                    temp += mat[j][l] * B[l][k];
-                }
-            ansMat[j][k] = temp;
-            }
-        }
-        for (int e = 0; e < rowSize; e++){
-            for (int f = 0; f < colSize; f++){
-                B[e][f]=ansMat[e][f];
-            }
+    for(int i=0;i<rowSize;i++){
+        for(int j=0;j<colSize;j++){
+            temp=mat[i][j] - B[i][j];
+            ansMat[i][j]=temp;
         }
     }
     
-    Matrix<T> C(rowSize,colSize, (T)0);
+    Matrix<T> C(rowSize, rhs.getColSize(), (T)0);
+    C.setMatrix(ansMat);
+    return C;
+}
+
+/*
+----------------------------------------------------------------------------------------------
+SCALAR OPERATIONS:-
+----------------------------------------------------------------------------------------------
+*/
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(double num){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0));
+    
+    T temp;
+    for(int i=0;i<rowSize;i++){
+        for(int j=0;j<colSize;j++){
+            temp=mat[i][j]*num;
+            ansMat[i][j]=temp;
+        }
+    }
+    
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+} 
+
+template <typename T>
+Matrix<T> Matrix<T>::operator/(double num){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0));
+    
+    double temp;
+    for(int i=0;i<rowSize;i++){
+        for(int j=0;j<colSize;j++){
+            temp=mat[i][j]/num;
+            ansMat[i][j]=temp;
+        }
+    }
+    
+    Matrix<T> C(rowSize, colSize, (T)0);
     C.setMatrix(ansMat);
     return C;
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::transpose(){   //Returns the transpose of the matrix
-    vector<vector<T>> transMat(colSize, vector<T>(rowSize, (T)0));
-    T temp;                   
-    for(int i=0;i<colSize;i++){  
-        for(int j=0;j<rowSize;j++){
-            transMat[i][j]=mat[j][i];
+Matrix<T> Matrix<T>::operator+(double num){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0));
+    
+    T temp;
+    for(int i=0;i<rowSize;i++){
+        for(int j=0;j<colSize;j++){
+            temp=mat[i][j]+num;
+            ansMat[i][j]=temp;
         }
     }
-
-    Matrix <T> finalmat(colSize, rowSize, (T)0);
     
-    finalmat.setMatrix(transMat);
-    return finalmat;
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
+} 
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-(double num){
+    vector<vector<T>> ansMat(rowSize, vector<T>(colSize, (T)0));
+    
+    T temp;
+    for(int i=0;i<rowSize;i++){
+        for(int j=0;j<colSize;j++){
+            temp=(double)mat[i][j]-num;
+            ansMat[i][j]=temp;
+        }
+    }
+    
+    Matrix<T> C(rowSize, colSize, (T)0);
+    C.setMatrix(ansMat);
+    return C;
 }
+
+/*
+----------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
+*/
+
 
 int main(){
     cout<<"elementry tests ->"<<endl;
     
-    Matrix<int> a(4, 4, 2);
+    Matrix<int> a(4, 2, 2);
     a.printMatrix();
     
     Matrix<int> b(a);
@@ -182,12 +261,18 @@ int main(){
     a.setMatrix(tempMat);
     a.printMatrix();
     
-    b.transpose().printMatrix();    //prints the transpose of matrix a
-    b.matExponentiation(b,2).printMatrix(); //Gives matrix b^2 
-    
     (a*b).printMatrix();
+    
+    Matrix<double> c(3,1,2);  //Testing the Scalar Operations
+    (c-1.5).printMatrix();
+    (c/3).printMatrix();
+    
+    Matrix<double> d(1,3,10);
+    vector<vector<double>> anotherMat(3, vector<double>(1, 5));
+    d.setMatrix(anotherMat);
+    
+    (c-d).printMatrix();  //Testing the Matrix Operations
     
     return 0;
 }
-
 
