@@ -123,6 +123,30 @@ Matrix<T> Matrix<T>::operator*(Matrix& rhs){
     C.setMatrix(ansMat);
     return C;
 }
+float determinant(float matrix[3][3]){
+    float sum=matrix[0][0]*(matrix[1][1]*matrix[2][2]-matrix[1][2]*matrix[2][1])-matrix[0][1]*(matrix[1][0]*matrix[2][2]-matrix[1][2]*matrix[2][0])+matrix[0][2]*(matrix[1][0]*matrix[2][1]-matrix[1][1]*matrix[2][0]);
+    return sum;
+}
+int solution(float matrix[3][4]){
+    float D[3][3]={{matrix[0][0],matrix[0][1],matrix[0][2]},{matrix[1][0],matrix[1][1],matrix[1][2]},{matrix[2][0],matrix[2][1],matrix[2][2]}};
+    float D1[3][3]={{matrix[0][1],matrix[0][2],matrix[0][3]},{matrix[1][1],matrix[1][2],matrix[1][3]},{matrix[2][1],matrix[2][2],matrix[2][3]}};
+    float D2[3][3]={{matrix[0][0],matrix[0][2],matrix[0][3]},{matrix[1][0],matrix[1][2],matrix[1][3]},{matrix[2][0],matrix[2][2],matrix[2][3]}};
+    float D3[3][3]={{matrix[0][0],matrix[0][1],matrix[0][3]},{matrix[1][0],matrix[1][1],matrix[1][3]},{matrix[2][0],matrix[2][1],matrix[2][3]}};
+    if(determinant(D)==0){
+        if(determinant(D1)==0 && determinant(D2)==0 && determinant(D3)==0){
+            cout<<"Infinite solution"<<endl;
+            return 0;
+        }else{
+            cout<<"No solution"<<endl;
+            return 0;
+        }
+    }
+    float x=determinant(D1)/determinant(D);
+    float y=-(determinant(D2)/determinant(D));
+    float z=determinant(D3)/determinant(D);
+    cout<<x<<" "<<y<<" "<<z<<endl;
+    return 0;
+}
 
 int main(){
     cout<<"elementry tests ->"<<endl;
@@ -138,6 +162,13 @@ int main(){
     a.printMatrix();
     
     (a*b).printMatrix();
+    float matrix[3][4];
+    for(int i=0;i<3;i++){
+        for(int j=0;j<4;j++){
+            cin>>matrix[i][j];
+        }
+    }
+    solution(matrix);
     
     return 0;
 }
